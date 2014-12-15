@@ -36,7 +36,7 @@
 	</repositories>
 
 	<dependencies>
-	
+
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-grizzly2-http</artifactId>
@@ -81,6 +81,13 @@
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-client</artifactId>
 			<version>${jersey.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.azkfw</groupId>
+			<artifactId>azuki-base</artifactId>
+			<version>1.4.1</version>
 		</dependency>
 
 		<dependency>
