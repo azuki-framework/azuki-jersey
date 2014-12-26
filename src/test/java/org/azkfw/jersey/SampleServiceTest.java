@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -36,17 +37,46 @@ public class SampleServiceTest extends AbstractJerseyTestCase {
 	}
 
 	@Test
-	public void testGet() {
+	public void testEchoGet() {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("aaa", "AAA");
-		params.put("msg", "test");
-		params.put("zzz", "ZZZ");
+		params.put("msg", "メッセージ[GET]");
 
 		Response res = getJson("/sample/echo", params);
 
 		String json = res.readEntity(String.class);
 
 		System.out.println("<<<" + json);
+	}
+
+	@Test
+	public void testEchoPost() {
+		
+		Form form = new Form();
+		form.param("msg","メッセージ[POST]");
+
+		Entity<Form> entity = Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE);
+		//Entity<Form> entity = Entity.entity(form, MediaType.APPLICATION_JSON_TYPE);
+
+		Response res = postJson("/sample/echo", entity);
+
+		String json = res.readEntity(String.class);
+
+		System.out.println("<<<" + json);
+	}
+
+	@Test
+	public void testAA() {
+		SampleService.RequestDto dto = new SampleService.RequestDto();
+		dto.setToken("tokennnn");
+
+		Entity<SampleService.RequestDto> e = Entity.entity(dto, MediaType.APPLICATION_JSON_TYPE);
+
+		Response res = postJson("/sample/location", e);
+
+		String json = res.readEntity(String.class);
+
+		System.out.println("<<<" + json);
+
 	}
 
 	protected final Response getJson(final String aPath) {
@@ -80,10 +110,8 @@ public class SampleServiceTest extends AbstractJerseyTestCase {
 	 * @param aJson パラメータ
 	 * @return 結果
 	 */
-	protected final Response postJson(final String aPath, final String aJson) {
-		Entity<String> entity = Entity.json(aJson);
-		Response response = target(aPath).request().post(entity);
-
+	protected final Response postJson(final String aPath, final Entity<?> aEntity) {
+		Response response = target(aPath).request().post(aEntity);
 		return response;
 	}
 
