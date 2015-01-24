@@ -9,6 +9,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.azkfw.jersey.service.AbstractService;
+
 @Path("sample")
 public class SampleService extends AbstractService {
 

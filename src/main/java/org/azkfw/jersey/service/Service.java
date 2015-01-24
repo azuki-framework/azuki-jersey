@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.azkfw.jersey;
+package org.azkfw.jersey.service;
 
 /**
- * このインターフェースは、サービス機能を定義したインターフェースです。
+ * このインターフェースは、サービス機能を定義するインターフェースです。
  * 
  * @since 1.0.0
- * @version 1.0.0 2014/12/15
+ * @version 1.0.0 2015/01/23
  * @author kawakicchi
  */
 public interface Service {

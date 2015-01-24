@@ -15,32 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.azkfw.jersey;
-
-import org.azkfw.lang.LoggingObject;
+package org.azkfw.jersey.service;
 
 /**
- * このクラスは、サービス機能を実装する為の基底クラスです。
+ * このクラスは、ビジネス機能を実装したｻｰﾋﾞｽクラスです。
  * 
  * @since 1.0.0
- * @version 1.0.0 2014/12/15
+ * @version 1.0.0 2015/01/23
  * @author kawakicchi
  */
-public abstract class AbstractService extends LoggingObject implements Service {
-
-	/**
-	 * コンストラクタ
-	 */
-	public AbstractService() {
-		super(Service.class);
-	}
+public abstract class AbstractBusinessService extends AbstractService {
 
 	/**
 	 * コンストラクタ
 	 * 
 	 * @param name 名前
 	 */
-	public AbstractService(final String name) {
+	public AbstractBusinessService(final String name) {
 		super(name);
 	}
 
@@ -49,7 +40,20 @@ public abstract class AbstractService extends LoggingObject implements Service {
 	 * 
 	 * @param clazz クラス
 	 */
-	public AbstractService(final Class<?> clazz) {
+	public AbstractBusinessService(final Class<?> clazz) {
 		super(clazz);
+	}
+
+	/**
+	 * ロジックを取得する。
+	 * 
+	 * @param clazz ロジッククラス
+	 * @return ロジック
+	 */
+	protected final <T> T getLogic(final Class<T> clazz) {
+		// TODO: 
+		//@SuppressWarnings("unchecked")
+		//T logic = (T) new XXXX();
+		return null;
 	}
 }
