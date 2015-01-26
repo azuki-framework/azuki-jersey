@@ -63,19 +63,15 @@ public class BusinessSupportFilter implements ContainerRequestFilter, ContainerR
 
 	@Override
 	public void filter(final ContainerRequestContext req) throws IOException {
-		System.out.println("BusinessSupportFilter.before() - start");
 		BusinessContainer container = new BusinessContainer();
 		container.initialize();
 		request.setAttribute(ATTRIBUTE_NAME, container);
-		System.out.println("BusinessSupportFilter.before() - end");
 	}
 
 	@Override
 	public void filter(final ContainerRequestContext req, final ContainerResponseContext res) throws IOException {
-		System.out.println("BusinessSupportFilter.after() - start");
 		BusinessContainer container = getContainer(request);
 		container.release();
-		System.out.println("BusinessSupportFilter.after() - end");
 	}
 
 	public static class BusinessContainer {
