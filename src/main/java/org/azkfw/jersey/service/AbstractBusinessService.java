@@ -17,6 +17,15 @@
  */
 package org.azkfw.jersey.service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
+
+import org.azkfw.business.BusinessServiceException;
+import org.azkfw.business.logic.Logic;
+import org.azkfw.jersey.filter.BusinessSupportFilter;
+import org.azkfw.jersey.filter.BusinessSupportFilter.BusinessContainer;
+import org.azkfw.util.StringUtility;
+
 /**
  * このクラスは、ビジネス機能を実装したｻｰﾋﾞｽクラスです。
  * 
@@ -24,36 +33,62 @@ package org.azkfw.jersey.service;
  * @version 1.0.0 2015/01/23
  * @author kawakicchi
  */
-public abstract class AbstractBusinessService extends AbstractService {
+public abstract class AbstractBusinessService extends AbstractDatabaseService {
+
+	@Context
+	private HttpServletRequest request;
 
 	/**
 	 * コンストラクタ
-	 * 
-	 * @param name 名前
 	 */
-	public AbstractBusinessService(final String name) {
-		super(name);
+	public AbstractBusinessService() {
+		super();
 	}
 
 	/**
 	 * コンストラクタ
 	 * 
-	 * @param clazz クラス
+	 * @param aName Name
 	 */
-	public AbstractBusinessService(final Class<?> clazz) {
-		super(clazz);
+	public AbstractBusinessService(final String aName) {
+		super(aName);
+	}
+
+	/**
+	 * コンストラクタ
+	 * 
+	 * @param aClass Class
+	 */
+	public AbstractBusinessService(final Class<?> aClass) {
+		super(aClass);
 	}
 
 	/**
 	 * ロジックを取得する。
 	 * 
-	 * @param clazz ロジッククラス
+	 * @param aName ロジック名
 	 * @return ロジック
+	 * @throws BusinessServiceException ビジネスサービス層に起因する問題が発生した場合
 	 */
-	protected final <T> T getLogic(final Class<T> clazz) {
-		// TODO: 
-		//@SuppressWarnings("unchecked")
-		//T logic = (T) new XXXX();
-		return null;
+	protected final Logic getLogic(final String aName) throws BusinessServiceException {
+		return getLogic(StringUtility.EMPTY, aName);
 	}
+
+	/**
+	 * ロジックを取得する。
+	 * 
+	 * @param aNamespace 名前空間
+	 * @param aName ロジック名
+	 * @return ロジック
+	 * @throws BusinessServiceException ビジネスサービス層に起因する問題が発生した場合
+	 */
+	protected final Logic getLogic(final String aNamespace, final String aName) throws BusinessServiceException {
+		Logic logic = null;
+
+		BusinessContainer container = BusinessSupportFilter.getContainer(request);
+		logic = container.getLogic(aNamespace, aName);
+
+		return logic;
+	}
+
 }
