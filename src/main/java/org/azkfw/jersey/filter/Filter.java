@@ -15,39 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.azkfw.jersey.service;
+package org.azkfw.jersey.filter;
 
 /**
- * このクラスは、永続化層を実装したサービスクラスです。
+ * このインターフェースは、フィルター機能を定義するインターフェースです。
  * 
  * @since 1.0.0
- * @version 1.0.0 2015/01/26
+ * @version 1.0.0 2015/02/02
  * @author Kawakicchi
  */
-public abstract class AbstractPersistenceService extends AbstractService {
+public interface Filter {
 
-	/**
-	 * コンストラクタ
-	 */
-	public AbstractPersistenceService() {
-		super();
-	}
-
-	/**
-	 * コンストラクタ
-	 * 
-	 * @param name 名前
-	 */
-	public AbstractPersistenceService(final String name) {
-		super(name);
-	}
-
-	/**
-	 * コンストラクタ
-	 * 
-	 * @param clazz クラス
-	 */
-	public AbstractPersistenceService(final Class<?> clazz) {
-		super(clazz);
-	}
 }

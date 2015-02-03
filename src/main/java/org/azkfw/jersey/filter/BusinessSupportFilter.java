@@ -42,13 +42,14 @@ import org.azkfw.persistence.database.DatabaseConnectionManager;
 import org.azkfw.persistence.database.DatabaseConnectionSupport;
 import org.azkfw.persistence.database.DatabaseSource;
 import org.azkfw.plugin.PluginManager;
+import org.azkfw.ws.rs.Priorities;
 
 /**
  * @since 1.0.0
  * @version 1.0.0 2015/01/26
  * @author Kawakicchi
  */
-@Priority(0)
+@Priority(Priorities.AUTHENTICATION - 100)
 public class BusinessSupportFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
 	private static final String ATTRIBUTE_NAME = "__BUSINESS_SUPPORT_FILTER_CONTAINER_ATTRIBUTE";

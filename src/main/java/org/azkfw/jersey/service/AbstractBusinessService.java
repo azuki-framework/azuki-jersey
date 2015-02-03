@@ -27,7 +27,7 @@ import org.azkfw.jersey.filter.BusinessSupportFilter.BusinessContainer;
 import org.azkfw.util.StringUtility;
 
 /**
- * このクラスは、ビジネス機能を実装したｻｰﾋﾞｽクラスです。
+ * このクラスは、ビジネス機能を実装したサービスクラスです。
  * 
  * @since 1.0.0
  * @version 1.0.0 2015/01/23

@@ -15,25 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.azkfw.jersey.service;
+package org.azkfw.jersey.filter;
 
 import java.sql.SQLException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 
-import org.azkfw.jersey.filter.BusinessSupportFilter;
 import org.azkfw.jersey.filter.BusinessSupportFilter.BusinessContainer;
+import org.azkfw.jersey.service.AbstractPersistenceService;
 import org.azkfw.persistence.database.DatabaseConnection;
 
 /**
- * このクラスは、データベース機能を実装したサービスクラスです。
+ * このクラスは、データベース機能を実装したフィルタクラスです。
  * 
  * @since 1.0.0
- * @version 1.0.0 2015/01/26
+ * @version 1.0.0 2015/02/02
  * @author Kawakicchi
  */
-public abstract class AbstractDatabaseService extends AbstractPersistenceService {
+public abstract class AbstractDatabaseFilter extends AbstractPersistenceService {
 
 	@Context
 	private HttpServletRequest request;
@@ -41,7 +41,7 @@ public abstract class AbstractDatabaseService extends AbstractPersistenceService
 	/**
 	 * コンストラクタ
 	 */
-	public AbstractDatabaseService() {
+	public AbstractDatabaseFilter() {
 		super();
 	}
 
@@ -50,7 +50,7 @@ public abstract class AbstractDatabaseService extends AbstractPersistenceService
 	 * 
 	 * @param name 名前
 	 */
-	public AbstractDatabaseService(final String name) {
+	public AbstractDatabaseFilter(final String name) {
 		super(name);
 	}
 
@@ -59,7 +59,7 @@ public abstract class AbstractDatabaseService extends AbstractPersistenceService
 	 * 
 	 * @param clazz クラス
 	 */
-	public AbstractDatabaseService(final Class<?> clazz) {
+	public AbstractDatabaseFilter(final Class<?> clazz) {
 		super(clazz);
 	}
 

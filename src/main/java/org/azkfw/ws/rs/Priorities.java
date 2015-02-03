@@ -15,39 +15,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.azkfw.jersey.service;
+package org.azkfw.ws.rs;
 
 /**
- * このクラスは、永続化層を実装したサービスクラスです。
- * 
  * @since 1.0.0
- * @version 1.0.0 2015/01/26
+ * @version 1.0.0 2015/02/02
  * @author Kawakicchi
  */
-public abstract class AbstractPersistenceService extends AbstractService {
+public final class Priorities {
 
-	/**
-	 * コンストラクタ
-	 */
-	public AbstractPersistenceService() {
-		super();
+	private Priorities() {
+		// prevents construction
 	}
 
 	/**
-	 * コンストラクタ
-	 * 
-	 * @param name 名前
+	 * Security authentication filter/interceptor priority. 1000
 	 */
-	public AbstractPersistenceService(final String name) {
-		super(name);
-	}
-
+	public static final int AUTHENTICATION = javax.ws.rs.Priorities.AUTHENTICATION;
 	/**
-	 * コンストラクタ
-	 * 
-	 * @param clazz クラス
+	 * Security authorization filter/interceptor priority. 2000
 	 */
-	public AbstractPersistenceService(final Class<?> clazz) {
-		super(clazz);
-	}
+	public static final int AUTHORIZATION = javax.ws.rs.Priorities.AUTHORIZATION;
+	/**
+	 * Header decorator filter/interceptor priority. 3000
+	 */
+	public static final int HEADER_DECORATOR = javax.ws.rs.Priorities.HEADER_DECORATOR;
+	/**
+	 * Message encoder or decoder filter/interceptor priority. 4000
+	 */
+	public static final int ENTITY_CODER = javax.ws.rs.Priorities.ENTITY_CODER;
+	/**
+	 * User-level filter/interceptor priority. 5000
+	 */
+	public static final int USER = javax.ws.rs.Priorities.USER;
 }

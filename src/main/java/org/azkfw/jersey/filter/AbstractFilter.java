@@ -15,22 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.azkfw.jersey.service;
+package org.azkfw.jersey.filter;
+
+import org.azkfw.lang.LoggingObject;
 
 /**
- * このクラスは、永続化層を実装したサービスクラスです。
+ * このクラスは、フィルタ機能を実装する為の基底クラスです。
  * 
  * @since 1.0.0
- * @version 1.0.0 2015/01/26
+ * @version 1.0.0 2015/02/02
  * @author Kawakicchi
  */
-public abstract class AbstractPersistenceService extends AbstractService {
+public class AbstractFilter extends LoggingObject {
 
 	/**
 	 * コンストラクタ
 	 */
-	public AbstractPersistenceService() {
-		super();
+	public AbstractFilter() {
+		super(Filter.class);
 	}
 
 	/**
@@ -38,7 +40,7 @@ public abstract class AbstractPersistenceService extends AbstractService {
 	 * 
 	 * @param name 名前
 	 */
-	public AbstractPersistenceService(final String name) {
+	public AbstractFilter(final String name) {
 		super(name);
 	}
 
@@ -47,7 +49,7 @@ public abstract class AbstractPersistenceService extends AbstractService {
 	 * 
 	 * @param clazz クラス
 	 */
-	public AbstractPersistenceService(final Class<?> clazz) {
+	public AbstractFilter(final Class<?> clazz) {
 		super(clazz);
 	}
 }
