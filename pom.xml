@@ -47,13 +47,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.azkfw</groupId>
-			<artifactId>azuki-jersey-test</artifactId>
-			<version>1.4.4</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-grizzly2-http</artifactId>
 			<version>${jersey.version}</version>
