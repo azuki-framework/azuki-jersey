@@ -32,7 +32,7 @@ public class AbstractFilter extends LoggingObject {
 	 * コンストラクタ
 	 */
 	public AbstractFilter() {
-		super(Filter.class);
+		super();
 	}
 
 	/**

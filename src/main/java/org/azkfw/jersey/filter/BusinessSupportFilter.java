@@ -229,7 +229,7 @@ public class BusinessSupportFilter implements ContainerRequestFilter, ContainerR
 		 */
 		private final org.azkfw.context.Context getContext() {
 			// TODO: コンテキストの引渡し方法を改善
-			return PluginManager.getContext();
+			return PluginManager.getInstance().getContext();
 		}
 	}
 }

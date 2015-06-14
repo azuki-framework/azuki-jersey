@@ -48,45 +48,45 @@ public abstract class AbstractBusinessFilter extends AbstractDatabaseService {
 	/**
 	 * コンストラクタ
 	 * 
-	 * @param aName Name
+	 * @param name Name
 	 */
-	public AbstractBusinessFilter(final String aName) {
-		super(aName);
+	public AbstractBusinessFilter(final String name) {
+		super(name);
 	}
 
 	/**
 	 * コンストラクタ
 	 * 
-	 * @param aClass Class
+	 * @param clazz Class
 	 */
-	public AbstractBusinessFilter(final Class<?> aClass) {
-		super(aClass);
+	public AbstractBusinessFilter(final Class<?> clazz) {
+		super(clazz);
 	}
 
 	/**
 	 * ロジックを取得する。
 	 * 
-	 * @param aName ロジック名
+	 * @param name ロジック名
 	 * @return ロジック
 	 * @throws BusinessServiceException ビジネスサービス層に起因する問題が発生した場合
 	 */
-	protected final Logic getLogic(final String aName) throws BusinessServiceException {
-		return getLogic(StringUtility.EMPTY, aName);
+	protected final Logic getLogic(final String name) throws BusinessServiceException {
+		return getLogic(StringUtility.EMPTY, name);
 	}
 
 	/**
 	 * ロジックを取得する。
 	 * 
-	 * @param aNamespace 名前空間
-	 * @param aName ロジック名
+	 * @param ns 名前空間
+	 * @param name ロジック名
 	 * @return ロジック
 	 * @throws BusinessServiceException ビジネスサービス層に起因する問題が発生した場合
 	 */
-	protected final Logic getLogic(final String aNamespace, final String aName) throws BusinessServiceException {
+	protected final Logic getLogic(final String ns, final String name) throws BusinessServiceException {
 		Logic logic = null;
 
 		BusinessContainer container = BusinessSupportFilter.getContainer(request);
-		logic = container.getLogic(aNamespace, aName);
+		logic = container.getLogic(ns, name);
 
 		return logic;
 	}

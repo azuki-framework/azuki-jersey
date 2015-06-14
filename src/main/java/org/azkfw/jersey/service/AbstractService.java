@@ -32,7 +32,7 @@ public abstract class AbstractService extends LoggingObject implements Service {
 	 * コンストラクタ
 	 */
 	public AbstractService() {
-		super(Service.class);
+		super();
 	}
 
 	/**
