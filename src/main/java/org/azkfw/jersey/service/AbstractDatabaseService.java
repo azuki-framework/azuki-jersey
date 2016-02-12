@@ -22,9 +22,9 @@ import java.sql.SQLException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 
+import org.azkfw.business.database.DatabaseConnection;
 import org.azkfw.jersey.filter.BusinessSupportFilter;
 import org.azkfw.jersey.filter.BusinessSupportFilter.BusinessContainer;
-import org.azkfw.persistence.database.DatabaseConnection;
 
 /**
  * このクラスは、データベース機能を実装したサービスクラスです。

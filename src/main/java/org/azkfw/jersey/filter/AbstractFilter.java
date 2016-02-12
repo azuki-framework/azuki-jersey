@@ -17,7 +17,7 @@
  */
 package org.azkfw.jersey.filter;
 
-import org.azkfw.lang.LoggingObject;
+import org.azkfw.log.LoggingObject;
 
 /**
  * このクラスは、フィルタ機能を実装する為の基底クラスです。

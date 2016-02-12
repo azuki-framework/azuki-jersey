@@ -31,17 +31,15 @@ import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.Context;
 
 import org.azkfw.business.BusinessServiceException;
+import org.azkfw.business.database.DatabaseConnection;
+import org.azkfw.business.database.DatabaseConnectionSupport;
 import org.azkfw.business.logic.Logic;
 import org.azkfw.business.logic.LogicManager;
-import org.azkfw.business.property.Property;
-import org.azkfw.business.property.PropertyManager;
-import org.azkfw.business.property.PropertySupport;
-import org.azkfw.context.ContextSupport;
-import org.azkfw.persistence.database.DatabaseConnection;
-import org.azkfw.persistence.database.DatabaseConnectionManager;
-import org.azkfw.persistence.database.DatabaseConnectionSupport;
-import org.azkfw.persistence.database.DatabaseSource;
+import org.azkfw.database.DatabaseManager;
+import org.azkfw.log.LoggingObject;
 import org.azkfw.plugin.PluginManager;
+import org.azkfw.plugin.PluginServiceException;
+import org.azkfw.util.StringUtility;
 import org.azkfw.ws.rs.Priorities;
 
 /**
@@ -50,7 +48,7 @@ import org.azkfw.ws.rs.Priorities;
  * @author Kawakicchi
  */
 @Priority(Priorities.AUTHENTICATION - 100)
-public class BusinessSupportFilter implements ContainerRequestFilter, ContainerResponseFilter {
+public class BusinessSupportFilter extends LoggingObject implements ContainerRequestFilter, ContainerResponseFilter {
 
 	private static final String ATTRIBUTE_NAME = "__BUSINESS_SUPPORT_FILTER_CONTAINER_ATTRIBUTE";
 
@@ -75,102 +73,114 @@ public class BusinessSupportFilter implements ContainerRequestFilter, ContainerR
 		container.release();
 	}
 
-	public static class BusinessContainer {
+	public static class BusinessContainer extends LoggingObject{
 
-		/**
-		 * データベースソース
-		 */
-		private DatabaseSource source;
+		/** Database */
+		private DatabaseConnection connection;
 
-		/**
-		 * コネクション
-		 */
-		private DatabaseConnection myConnection;
-
-		/**
-		 * Logics
-		 */
+		/** Logics */
 		private Map<String, Map<String, Logic>> logics;
 
 		private BusinessContainer() {
 			logics = new HashMap<String, Map<String, Logic>>();
-
 		}
 
+		/**
+		 * ロジックを取得する。
+		 * 
+		 * @param name ロジック名
+		 * @return ロジック
+		 * @throws BusinessServiceException ビジネスサービス層に起因する問題が発生した場合
+		 */
+		public final Logic getLogic(final String name) throws BusinessServiceException {
+			return getLogic(StringUtility.EMPTY, name);
+		}
+		
+		/**
+		 * ロジックを取得する。
+		 * 
+		 * @param namespace 名前空間
+		 * @param name ロジック名
+		 * @return ロジック
+		 * @throws BusinessServiceException ビジネスサービス層に起因する問題が発生した場合
+		 */
+		public final Logic getLogic(final String namespace, final String name) throws BusinessServiceException {
+			Logic logic = null;
+			try {
+				Map<String, Logic> logics = null;
+				if (this.logics.containsKey(namespace)) {
+					logics = this.logics.get(namespace);
+				} else {
+					logics = new HashMap<String, Logic>();
+					this.logics.put(namespace, logics);
+				}
+				
+				if (logics.containsKey(name)) {
+					logic = logics.get(name);
+				} else {
+					logic = LogicManager.create(name);
+					if (null != logic) {
+						if (logic instanceof DatabaseConnectionSupport) {
+							DatabaseConnectionSupport support = (DatabaseConnectionSupport) logic;
+							support.setConnection(getConnection());
+						}
+						PluginManager.getInstance().support(logic);
+						logic.initialize();
+					}
+					logics.put(name, logic);
+				}
+			} catch (SQLException ex) {
+				throw new BusinessServiceException(ex);
+			} catch (PluginServiceException ex) {
+				throw new BusinessServiceException(ex);
+			}
+			return logic;
+		}
+		
 		private void initialize() {
 
+			logics.clear();
 		}
-
+		
 		private void release() {
-			for (String namespace : logics.keySet()) {
-				Map<String, Logic> ls = logics.get(namespace);
-				for (String name : ls.keySet()) {
-					ls.get(name).destroy();
+			for (Map<String, Logic> logics : this.logics.values()) {
+				for (Logic logic : logics.values()) {
+					logic.destroy();
 				}
 			}
 			logics.clear();
 
-			try {
-				if (null != myConnection) {
-					myConnection.getConnection().commit();
-				}
-			} catch (SQLException ex) {
-				// fatal(ex);
-			}
-			if (null != source && null != myConnection) {
+			if (null != connection) {
 				try {
-					source.returnConnection(myConnection);
+					connection.getConnection().commit();
 				} catch (SQLException ex) {
-					// warn(ex);
+					fatal(ex);
 				}
-				myConnection = null;
-				source = null;
+				try {
+					connection.getConnection().close();
+				} catch (SQLException ex) {
+					fatal(ex);
+				}
+				connection = null;
 			}
-		}
-
-		public Logic getLogic(final String aNamespace, final String aName) throws BusinessServiceException {
-			Logic logic = null;
-
-			try {
-				Map<String, Logic> ls = null;
-				if (logics.containsKey(aNamespace)) {
-					ls = logics.get(aNamespace);
-				} else {
-					ls = new HashMap<String, Logic>();
-					logics.put(aNamespace, ls);
-				}
-
-				if (ls.containsKey(aName)) {
-					logic = ls.get(aName);
-				} else {
-					logic = LogicManager.create(aNamespace, aName);
-					if (null != logic) {
-						doLogicSupport(logic);
-						logic.initialize();
-					}
-					ls.put(aName, logic);
-				}
-			} catch (SQLException ex) {
-				throw new BusinessServiceException(ex);
-			}
-			return logic;
 		}
 
 		/**
 		 * コネクションを取得する。
 		 * 
 		 * @return コネクション
-		 * @throws SQL実行時に問題が発生した場合
+		 * @throws SQLException SQL操作に起因する問題が発生した場合
 		 */
 		public final DatabaseConnection getConnection() throws SQLException {
-			if (null == myConnection) {
-				source = DatabaseConnectionManager.getSource();
-				myConnection = source.getConnection();
-				if (null != myConnection) {
-					myConnection.getConnection().setAutoCommit(false);
+			try {
+				if (null == connection) {
+					connection = new DatabaseConnection(DatabaseManager.getInstance().getConnection());
+					connection.getConnection().setAutoCommit(false);
 				}
+			} catch (SQLException ex) {
+				throw ex;
 			}
-			return myConnection;
+			return connection;
 		}
 
 		/**
@@ -195,41 +205,6 @@ public class BusinessSupportFilter implements ContainerRequestFilter, ContainerR
 			if (null != connection) {
 				connection.getConnection().rollback();
 			}
-		}
-
-		/**
-		 * ロジックにサポートを行う。
-		 * <p>
-		 * ロジックに新機能を追加したい場合、このメソッドをオーバーライドしスーパークラスの同メソッドを呼び出した後に追加機能をサポートすること。
-		 * </p>
-		 * 
-		 * @param aLogic ロジック
-		 * @throws SQLException SQL操作時に問題が発生した場合
-		 */
-		private void doLogicSupport(final Logic aLogic) throws SQLException {
-			if (aLogic instanceof ContextSupport) {
-				((ContextSupport) aLogic).setContext(getContext());
-			}
-			if (aLogic instanceof PropertySupport) {
-				Property property = PropertyManager.get(aLogic.getClass());
-				if (null == property) {
-					property = PropertyManager.load(aLogic.getClass(), getContext());
-				}
-				((PropertySupport) aLogic).setProperty(property);
-			}
-			if (aLogic instanceof DatabaseConnectionSupport) {
-				((DatabaseConnectionSupport) aLogic).setConnection(getConnection());
-			}
-		}
-
-		/**
-		 * コンテキストを取得する。
-		 * 
-		 * @return コンテキスト
-		 */
-		private final org.azkfw.context.Context getContext() {
-			// TODO: コンテキストの引渡し方法を改善
-			return PluginManager.getInstance().getContext();
 		}
 	}
 }
